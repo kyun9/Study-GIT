@@ -1,4 +1,4 @@
-2. ## Branch 활용하기
+## Branch 활용하기
 
    `git init` 을 하였을 때 `(master)` 는 사실 master 브랜치에 있다라는 사실을 보여주고 있는 것이다.
    
