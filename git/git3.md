@@ -1,101 +1,117 @@
-#  Branch 활용하기
+2. ## Branch 활용하기
 
-git init 을 하였을 때 (master)는 사실 master 브랜치에 있다라는 사실을 보여주고 있는 것이다.
+   `git init` 을 하였을 때 `(master)` 는 사실 master 브랜치에 있다라는 사실을 보여주고 있는 것이다.
+   
+   1. branch 생성
 
-1. branch 생성
-
-```bash
-(master) $ git branch {branch이름}
-(master ) $ git branch
-*master
-{branch이름}
-```
-
-2. branch 이동
-
-   ```bash
-   $ git checkout {branch이름}
+      ```
+      (master) $ git branch {branch이름}
+      (master) $ git branch
+      *master
+      {branch이름}
+      ```
+   
+   2. branch 이동
+   
+      ```
+      $ git checkout {branch이름}
+      ```
+   
+      - 위 두 명령어를 동시에 실행하려면 아래와 같이 한다.
+   
+        ```
+        $ git checkout -b {branch이름}
+        ```
+   
+   3. branch 삭제
+   
+      ```
+      $ git branch -d {브랜치이름}
+      ```
+   
+   4. branch 병합
+   
+      ```
+      (master) $ git merge feature/main
+      ```
+   
+      `master` 브랜치에 `feature/main` 을 병합한다.
+   
+      항상 병합을 하고 싶은 대상의 브랜치로 옮겨서 진행해야 한다.
+   
+   ## Git merge
+   
+   ### 1. Fast-fowarding
+   
+   브랜치를 나눈 이후에 master 브랜치에 커밋이 발생하지 않았고, 단순히 커밋만 옮기면 되는 경우. merge 커밋이 발생하지는 않음.
+   
+   ### 2. Auto Merge
+   
+   브랜치를 나눈 이후에 master 브랜치에 커밋이 발생하였으나, 동일한 파일이 수정되지 않아서 자동으로 병합이 되는 경우. merge 커밋이 발생함.
+   
    ```
-
-   * 위 두 명령어를 동시에 실행하려면 아래와 같이 한다.
-
-     ```bash
-     $ git checkout -b {branch이름}
-     ```
-
-3.  branch 삭제
-
-   ```bash
-   $ git branch -d {branch이름}
+   $ git log --graph --oneline
+   *   85cd33b (test) Merge branch 'feature/main'
+   |\
+   | * 42df5bb Complete main feature
+   * | 90cf6e6 README
+   |/
+   * 98aa976 Init css/js
    ```
-
-4. branch 병합
-
-   ```bash
-   (master) $ git merge feature/main
+   
+   ### 3. Merge conflict 발생
+   
+   브랜치를 나눈 이후에 master 브랜치에 커밋이 발생하였고, 동일한 파일이 각자 다른 브랜치에서 수정된 경우 자동으로 merge가 되지 않는다. 따라서 merge conflict가 발생하고, 직접 수정 후 커밋을 해야한다.
+   
    ```
-
-   master 브랜치에 feature/main 을 병합한다. 
-
-   항상 병합하고 싶은 대상의 브랜치로 옮겨서 진행해야 한다.
-
-# Git merge
-
-## 1. Fast-forwarding
-
-실제로 master 브랜치에 커밋이 발생하지 않았고, 단순히 커밋만 옮기면 되는 경우.
-
-merge 커밋이 발생하지는 않음.
-
-## 2. Auto Merge
-
-브랜치를 나눈 이후에  master 브랜치에 커밋이 발생하였으나, 동일한 파일이 수정되지 않아서 자동으로 병합이 되는 경우, merge 커밋이 발생함.
-
-``` bash
-$ git log --graph --oneline  //show commit tree structure
-```
-
-
-
-## 3. Merge conflict 발생
-
-브랜치를 나눈 이후에 master 브랜치에 커밋이 발생하였고, 동일한 파일이 각자 다른 브랜치에서 수정된 경우 자동으로 merge가 되지 않는다. 따라서 merge conflict가 발생하고, 직접 수정 후 커밋을 해야한다.
-
-``` bash
-$ git merge feature/main
-```
-
-Git은 충돌이 발생한 파일에 아래와 같이 표기를 해준다. 해당 부분을 찾아서 수동으로 해결 해야한다.
-
-충돌 위치를 파악하기 위해서 "git status"를 통해 확인하자!!
-
-이후
-
-```bash
-$ git add .
-$ git commit
-```
-
-커밋을 하게 되면,  merge 커밋이 발생한다.
-
-# Git stash
-
-현재 변경 사항을 담아 둘 수 있는 임시 공간이 존재한다.
-
-1. 현재 변경사항 담기
-
-   ```bash
-   $ git stash
-   $ git stash list
+   $ git merge feature/main
+   Auto-merging README.md
+   CONFLICT (content): Merge conflict in README.md
+   Automatic merge failed; fix conflicts and then commit the result.
    ```
-
-2. 임시 저장사항 불러오기
-
-   ```bash
-   $ git stash pop
+   
+   Git은 충돌이 발생한 파일에 아래와 같이 표기를 해준다. 해당 부분을 찾아서 수동으로 해결 해야한다. 충돌 위치를 파악하기 위해서 `git status` 를 통해 확인하자!
+   
    ```
-
-   위의 명령어는 apply + drop 과 동일하다.
+   <<<<<<< HEAD
+   Master 수정
+   =======
+   Branch 수정
+   >>>>>>> feature/footer
+   $ git add .
+   $ git commit
+   ```
+   
+   커밋을 하게 되면, merge 커밋이 발생한다.
+   
+   ```
+   $ git log --graph --oneline
+   *   4ef20fb (HEAD -> master) Merge branch 'feature/footer'
+   |\
+   | * 9701912 (feature/footer) Complete footer
+   * | c932f24 README
+   |/
+   *   85cd33b (test) Merge branch 'feature/main'
+   ```
+   
+   ## Git stash
+   
+   현재 변경 사항을 담아 둘 수 있는 임시 공간이 존재한다.
+   
+   1. 현재 변경사항 담기
+   
+      ```
+      $ git stash
+      $ git stash list
+      ```
+   
+   2. 임시 저장사항 불러오기
+   
+      ```
+      $ git stash pop
+      ```
+   
+      위의 명령어는 `apply` + `drop` 과 동일하다.
 
 # 참고 사이트
 
